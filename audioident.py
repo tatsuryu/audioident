@@ -70,7 +70,7 @@ def ident_data(database: dict, caminho: str) -> dict:
             file=sys.stderr)
     return r
 
-def old_pesquisa(caminho: str, recursive=True) -> list:
+def old_pesquisa(caminho: str, recursive=True):
     '''Pesquisa recursivamente em caminho os arquivos e retorna em uma lista.
     Função criada somente para atender versões do python3 inferiores a 3.5'''
     import fnmatch
