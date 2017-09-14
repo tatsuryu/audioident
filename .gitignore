@@ -1,4 +1,4 @@
-# Byte-compiled / optimized / DLL files
+.capitalize())# Byte-compiled / optimized / DLL file2
 __pycache__/
 *.py[cod]
 *$py.class
@@ -99,3 +99,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# sqlite databases
+*.db
