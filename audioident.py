@@ -25,7 +25,7 @@ def get_args():
 
     parser.add_argument('-s', '--saida', choices=['csv', 'stdout' ],
         default='csv', help='Especifica qual saída deve ser utilizada para\
-        relatório de áudios. Padrão: stdout e stderr para áudios não\
+        relatório de áudios. Padrão: csv e stderr para áudios não\
         identificados.')
 
     return parser.parse_args()
