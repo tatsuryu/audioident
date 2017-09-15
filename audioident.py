@@ -23,8 +23,8 @@ def get_args():
     parser.add_argument('-b', '--banco', default='./ai.db',
         help='Especifica database de áudios.')
 
-    parser.add_argument('-s', '--saida', choices=['csv','sqlite', 'padrao' ], 
-        default='padrao', help='Especifica qual saída deve ser utilizada para\
+    parser.add_argument('-s', '--saida', choices=['csv', 'stdout' ],
+        default='csv', help='Especifica qual saída deve ser utilizada para\
         relatório de áudios. Padrão: stdout e stderr para áudios não\
         identificados.')
 
@@ -90,25 +90,25 @@ def saida_padrao(data: dict):
     for chave, valor in data.items():
         print('[{}]  {}'.format(chave, valor))
 
-def saida_csv():
+def saida_csv(data: dict):
     '''Recebe dicionário simples e direciona a saída para arquivo csv.'''
-    pass
+    import csv
 
-def saida_sqlite():
-    '''Recebe dicionário simples e direciona a saída para arquivo sqlite.'''
-    pass
+    with open('summary.csv','w',encoding='utf-8') as csvdata:
+        fieldnames = [ 'arquivo', 'texto' ]
+        writer = csv.writer(csvdata)
+
+        for chave in sorted(data.keys()):
+            writer.writerow([ chave, data[chave] ])
 
 saida = {
     'csv' : saida_csv,
-    'padrao' : saida_padrao,
-    'sqlite' : saida_sqlite,
+    'stdout' : saida_padrao,
 }
 
 if __name__ == "__main__":
     opts = get_args()
     db = load_data(opts.banco)
     saida[opts.saida](ident_data(db, opts.diretorio))
-    #for c, t in ident_data(db, opts.diretorio).items():
-    #    print('[{}]  {}'.format(c,t))
 
 # vim: sw=4 ts=4 sm et fo+=t tw=79 fileencoding=utf-8 cursorline
