@@ -8,7 +8,6 @@ import sys
 
 def get_args():
     '''Função que analisae os arqumentos recebidos em linha do comando.'''
-    global pathlst
     parser = argparse.ArgumentParser(
         description="Identifica arquivos em caminho informado.",
         epilog="%(prog)s -d CAMINHO1 CAMINHO2",
@@ -61,21 +60,22 @@ def ident_data(database: dict, caminho: str) -> dict:
     else:
         from glob import iglob as pesquisa
 
-    for filename in pesquisa('{}/*.gsm'.format(caminho), recursive=True):
-        chk = arqhash(os.path.abspath(filename))
-        if chk in database:
-            r[os.path.abspath(filename)] = database[chk]
-        else:
-            print('DESCONHECIDO [{}]({})'.format(os.path.abspath(filename),chk),
-            file=sys.stderr)
-    return r
+    for pasta in caminho:
+        for filename in pesquisa('{}/**/*.gsm'.format(pasta), recursive=True):
+            chk = arqhash(os.path.abspath(filename))
+            if chk in database:
+                r[os.path.abspath(filename)] = database[chk]
+            else:
+                print('DESCONHECIDO [{}]({})'.format(os.path.abspath(filename),chk),
+                file=sys.stderr)
+        return r
 
 def old_pesquisa(caminho: str, recursive=True):
     '''Pesquisa recursivamente em caminho os arquivos e retorna em uma lista.
     Função criada somente para atender versões do python3 inferiores a 3.5'''
     import fnmatch
 
-    caminho = caminho.rsplit('/',1)[0]
+    caminho = caminho.rsplit('/*',1)[0]
     for root, dirnames, filenames in os.walk(caminho):
         for filename in fnmatch.filter(filenames, '*.gsm'):
             yield os.path.join(root, filename)
@@ -85,11 +85,30 @@ def arqhash(arquivo: str) -> str:
     with open(arquivo, 'rb') as arq:
         return md5(arq.read()).hexdigest()
 
+def saida_padrao(data: dict):
+    '''Recebe dicionário e exibe saída em tela no formato: [chave] valor.'''
+    for chave, valor in data.items():
+        print('[{}]  {}'.format(chave, valor))
+
+def saida_csv():
+    '''Recebe dicionário simples e direciona a saída para arquivo csv.'''
+    pass
+
+def saida_sqlite():
+    '''Recebe dicionário simples e direciona a saída para arquivo sqlite.'''
+    pass
+
+saida = {
+    'csv' : saida_csv,
+    'padrao' : saida_padrao,
+    'sqlite' : saida_sqlite,
+}
 
 if __name__ == "__main__":
     opts = get_args()
     db = load_data(opts.banco)
-    for c, t in ident_data(db, opts.diretorio[0]).items():
-        print('[{}]  {}'.format(c,t))
+    saida[opts.saida](ident_data(db, opts.diretorio))
+    #for c, t in ident_data(db, opts.diretorio).items():
+    #    print('[{}]  {}'.format(c,t))
 
 # vim: sw=4 ts=4 sm et fo+=t tw=79 fileencoding=utf-8 cursorline
