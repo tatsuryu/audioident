@@ -75,7 +75,7 @@ def old_pesquisa(caminho: str, recursive=True):
     Função criada somente para atender versões do python3 inferiores a 3.5'''
     import fnmatch
 
-    caminho = caminho.rsplit('/*',1)[0]
+    caminho = caminho.split('/*',1)[0]
     for root, dirnames, filenames in os.walk(caminho):
         for filename in fnmatch.filter(filenames, '*.gsm'):
             yield os.path.join(root, filename)
