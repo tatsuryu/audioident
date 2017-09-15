@@ -68,7 +68,7 @@ def ident_data(database: dict, caminho: str) -> dict:
             else:
                 print('DESCONHECIDO [{}]({})'.format(os.path.abspath(filename),chk),
                 file=sys.stderr)
-        return r
+    return r
 
 def old_pesquisa(caminho: str, recursive=True):
     '''Pesquisa recursivamente em caminho os arquivos e retorna em uma lista.
